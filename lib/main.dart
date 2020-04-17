@@ -140,14 +140,20 @@ class _PushMessagingExampleState extends State<PushMessagingExample> {
     super.initState();
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
+        // WORKAROUND
+        // message = fixMessageTitleAndBody(message);
         print("onMessage: $message");
         _showItemDialog(message);
       },
       onLaunch: (Map<String, dynamic> message) async {
+        // WORKAROUND
+        // message = fixMessageTitleAndBody(message);
         print("onLaunch: $message");
         _navigateToItemDetail(message);
       },
       onResume: (Map<String, dynamic> message) async {
+        // WORKAROUND
+        // message = fixMessageTitleAndBody(message);
         print("onResume: $message");
         _navigateToItemDetail(message);
       },
@@ -166,6 +172,19 @@ class _PushMessagingExampleState extends State<PushMessagingExample> {
       });
       print(_homeScreenText);
     });
+  }
+
+  Map<String, dynamic> fixMessageTitleAndBody(Map<String, dynamic> message) {
+    if (!message.containsKey("notification")) {
+      message["notification"] = {};
+    }
+    if (!message["notification"].containsKey("title") && message["data"].containsKey("title")) {
+      message["notification"]["title"] = message["data"]["title"];
+    }
+    if (!message["notification"].containsKey("body") && message["data"].containsKey("body")) {
+      message["notification"]["body"] = message["data"]["body"];
+    }
+    return message;
   }
 
   @override
